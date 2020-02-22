@@ -1,0 +1,8 @@
+
+
+ECC flags disappear if filtering only one spectrum
+
+Water filtering first spectrum despite nothing selected after ECC
+
+Siemens data not converting (Bangalore, Chennai)
+

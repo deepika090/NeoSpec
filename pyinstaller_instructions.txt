@@ -1,0 +1,3 @@
+Run the following command in the source directory
+
+pyinstaller --onefile --additional-hooks-dir=. --noupx gui.py
