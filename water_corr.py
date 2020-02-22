@@ -216,6 +216,93 @@ def lcm_t1_corr_COMET():
     
     return(tna_conc)
     
+	
+def lcm_t1_corr_HELIX_3500():
+
+    # Make a top-level instance and hide in top left corner, get filepath
+    root = Tkinter.Tk()
+    root.geometry('0x0+0+0')
+    root.attributes("-topmost", 1)
+    root.withdraw()
+    table1 = tkFileDialog.askopenfilename(parent=root,title='CHOOSE TR=1500 LCM RESULTS TABLE',filetypes=[("Table file", "*table.txt")])
+    table_dir = os.path.split(table1)[0]
+    os.chdir(table_dir)
+    table2 = tkFileDialog.askopenfilename(parent=root,title='CHOOSE TR=5000 LCM RESULTS TABLE',filetypes=[("Table file", "*table.txt")])
+    table3 = tkFileDialog.askopenfilename(parent=root,title='CHOOSE WATER RESULTS TABLE',filetypes=[("Table file", "*table.txt")])
+    root.attributes("-topmost", 0)
+    root.destroy()
+    
+    amp_list = np.zeros(shape=2)
+    water_amp = np.zeros(shape=1)
+    
+    searchfile = open(table1,'r')
+    for line in searchfile:
+        if "NAA+NAAG" in line: 
+            amp_list[0]=float(line.split()[0])
+            break
+    searchfile = open(table2,'r')
+    for line in searchfile:
+        if "NAA+NAAG" in line: 
+            amp_list[1]=float(line.split()[0])
+            break    
+    searchfile = open(table3,'r')
+    for line in searchfile:
+        if "Water@TRinf" in line: 
+            water_amp=float(line.split()[1])
+            break    
+        
+    
+    td_list = [1470,3470]
+    
+    plt.scatter(td_list,amp_list)
+    
+    tna_amp,tna_t1=np.square(curve_fit(t1_curve,td_list,amp_list,p0=[np.max(amp_list),np.sqrt(1500)])[0])
+    
+    plt.plot(np.arange(0,10000),t1_curve(np.arange(0,10000),np.sqrt(tna_amp),np.sqrt(tna_t1)))
+    
+    axes=plt.gca()
+    axes.set_xlim(0,10000)
+    axes.set_ylim(0,tna_amp)    
+    axes.set_ylabel('tNA Signal Intensity')
+    axes.set_xlabel('Repetition Time (ms)')
+    axes.set_title('tNA Relaxation Curve')
+#    return(m0_est,t1_est)
+    
+#def conc_calc_phantom(tna_amp,water_amp):
+#    lcm_cali_factor=0.500801282
+#    water_conc=55509.29781
+#
+#    tna_h2o_ratio = ((tna_amp*3.0)/water_amp)*lcm_cali_factor
+#    
+#    tna_conc = tna_h2o_ratio * water_conc * (2.0/3.0)
+#    
+#    return(tna_conc)
+    
+#def conc_calc_neo(tna_amp,water_amp):
+    lcm_cali_factor=0.500801282
+    water_conc=49070.21926
+
+    tna_h2o_ratio = ((tna_amp*3.0)/water_amp)*lcm_cali_factor
+    
+    tna_conc = tna_h2o_ratio * water_conc * (2.0/3.0)
+    
+    
+    resfile=os.path.abspath(table_dir + '/results.csv')
+    
+    with open(resfile, 'w') as f:
+        f.write('tNA Fit Results\n')
+        f.write('tNA@TR1500, '+str(amp_list[0])+'\n')
+        f.write('tNA@TR3500, '+str(amp_list[1])+'\n')        
+        f.write('tNA@TRinf, '+str(tna_amp)+'\n')
+        f.write('tNA T1, '+str(tna_t1)+'\n')
+        f.write('Water@TRinf, '+str(water_amp)+'\n')
+        f.write('\n')
+        f.write('[tNA], '+str(tna_conc)+'\n')
+    
+    return(tna_conc)	
+	
+	
+	
 def water_t2_corr_phantom():
     
     # Make a top-level instance and hide in top left corner, get filepath

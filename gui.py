@@ -86,7 +86,8 @@ class MRS_GUI:
         self.actionmenu.add_command(label="Open File...", command=self.dicom_master)
         self.actionmenu.add_command(label="Convert Directory for Processing...", command=filetype_check)
         self.actionmenu.add_command(label="Calculate water results...", command=self.WaterCalc)
-        self.actionmenu.add_command(label="Calculate concentration from LCM results & water results...", command=self.ConcCalc)
+        self.actionmenu.add_command(label="Calculate concentration from LCM results & water results TRs 1500 & 5000 ...", command=self.ConcCalc)
+        self.actionmenu.add_command(label="Calculate concentration from LCM results & water results TRs 1500 & 3500 ...", command=self.ConcCalc3500)		
         self.actionmenu.add_command(label="Calculate PARs from LCM results...", command=self.PARCalc)
         self.master.config(menu=self.menubar)
         self.menubar.add_cascade(label="File", menu=self.actionmenu)
@@ -281,7 +282,39 @@ class MRS_GUI:
         frame.attributes("-topmost", 0)
         frame.destroy()
         
-    def ConcCalc(self):
+    def ConcCalc3500(self):
+        
+		tna_conc=lcm_t1_corr_HELIX_3500()
+		
+#        tna_conc=lcm_t1_corr_COMET()
+#        
+#        if resfile1 == resfile2:
+        frame2 = Tkinter.Tk()
+        frame2.geometry('0x0+0+0')
+        frame2.attributes("-topmost", 1)
+        frame2.withdraw()    
+#            phantom_yn=tkMessageBox.askyesno('Phantom?', 'Is this a phantom?',parent=frame2)
+#            frame2.attributes("-topmost", 0)
+#            frame2.destroy()
+#            
+#            if phantom_yn == True:
+#                tna_conc=conc_calc_phantom(tna_amp,water_amp)
+#                tkMessageBox.showinfo("[tNA] estimation result", "Phantom [tNA] = %.1f mM" % tna_conc)
+#                with open(resfile1, 'a') as f:
+#                    f.write('tNA Concentration Calculation (PHANTOM)\n')
+#                    f.write('[tNA], '+str(tna_conc)+', mM\n')
+#                    f.write('\n')                
+#            else:
+#               tna_conc=conc_calc_neo(tna_amp,water_amp)
+        tkMessageBox.showinfo("[tNA] estimation result", "Neonatal [tNA] = %.1f mM" % tna_conc)
+        frame2.attributes("-topmost", 0)
+        frame2.destroy()
+#        with open(resfile1, 'a') as f:
+#            f.write('tNA Concentration Calculation (NEONATAL)\n')
+#            f.write('[tNA], '+str(tna_conc)+', mM\n')
+#            f.write('\n')
+
+	def ConcCalc(self):
         
         tna_conc=lcm_t1_corr_COMET()
 #        
